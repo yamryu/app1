@@ -16,7 +16,7 @@ const calculate = (firstNumber, secondNumber, operation) => {
             return x - y;
         case '*':
             return x * y;
-        case '÷':
+        case '/':
             if (y !== 0) {
                 return x / y; 
             } else {
@@ -62,3 +62,48 @@ for (let i = 0; i < numButtons.length; i++) {
     });
   }
 }
+
+//演算処理
+const opratorButtons = document.querySelectorAll('.oprator'); //演算子ボタンをすべて取得
+opratorButtons.forEach((button) => { // 各演算子ボタンに対して処理を追加
+    button.addEventListener('click', () => {
+        let op = button.textContent; // ボタンに書かれている文字（+ − × ÷ =）を取得
+    
+        //'='押された際の処理
+        if (op === '=') {
+            if(firstNumber !== null && operation !== null) {
+                secondNumber = display.value;
+                const result = calculate(firstNumber, secondNumber, operation);
+                display.value = result;
+                firstNumber = result;
+                secondNumber = null;
+                operation = null;
+            }
+            return;
+        }
+        //演算子を変換
+        switch (op) {
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+                operation = op;
+                break;
+            default:
+                return;
+        }
+        //すでに演算子押してあるかチェック
+        if(firstNumber !== null && operation !== null) {
+            secondNumber = display.value; //今、画面に表示されている数値を代入
+            const result = calculate(firstNumber, secondNumber, operation);
+            display.value = result;
+            firstNumber = result;
+            secondNumber = null;
+        } else {
+            firstNumber = display.value;
+        }
+
+        operation = op; //ここで演算子更新
+        display.value = '0'; // 次の入力のために0を表示
+    })
+});
