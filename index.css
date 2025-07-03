@@ -47,7 +47,7 @@ body {
 
 /* ACボタンを横長にする */
 .button.wide {
-  background-color: #ff9500;
+  background-color: #c4bdb5;
   width: 105px;
   grid-column: span 2; /* 横に2マス分広げる（重要！） */
 }
