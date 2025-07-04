@@ -1,6 +1,6 @@
 //数字保持用変数宣言　
-let firstNumber = null; //最初に押したもの
-let secondNumber = null; //いこーる前に押したもの
+let firstNumber = null; //
+let secondNumber = null; //
 let operation = null; //
 const display = document.getElementById('display');
 
@@ -47,21 +47,45 @@ allClearButton.addEventListener('click', () => {
     operation = null;
     });
 
-//数字ボタン処理
+// 数字と小数点のボタン処理
 const numButtons = document.getElementsByClassName('button');
 for (let i = 0; i < numButtons.length; i++) {
   const text = numButtons[i].textContent;
 
- if (/^[0-9]$/.test(text)) {
+  if (/^[0-9.]$/.test(text)) {
     numButtons[i].addEventListener('click', () => {
-      if (display.value === '0') {
-        display.value = text;
+      let current = display.value;
+
+      // 小数点が押されたとき
+      if (text === '.') {
+        if (current.includes('.')) return;
+        if (current === '0') {
+          display.value = '0.';
+        } else {
+          display.value = current + '.';
+        }
+        return;
+      }
+
+      // 数字が押されたとき
+      // 小数点が含まれるかどうかで処理を分ける
+      if (current.includes('.')) {
+        // 小数点がある場合：そのまま末尾に追加
+        display.value = current + text;
       } else {
-        display.value += text;
+        // カンマを除去 → 数値追加 → カンマ付き表示
+        let rawValue = current.replace(/,/g, '');
+        if (rawValue === '0') {
+          rawValue = text;
+        } else {
+          rawValue += text;
+        }
+        display.value = Number(rawValue).toLocaleString();
       }
     });
   }
 }
+
 
 //演算処理
 const opratorButtons = document.querySelectorAll('.oprator'); //演算子ボタンをすべて取得
@@ -72,9 +96,13 @@ opratorButtons.forEach((button) => { // 各演算子ボタンに対して処理�
         //'='押された際の処理
         if (op === '=') {
             if(firstNumber !== null && operation !== null) {
-                secondNumber = display.value;
+                secondNumber = display.value.replace(/,/g, '');
                 const result = calculate(firstNumber, secondNumber, operation);
-                display.value = result;
+                if (typeof result === 'number') {
+                    display.value = result.toLocaleString();
+                    } else {
+                        display.value = result;
+                    }
                 firstNumber = result;
                 secondNumber = null;
                 operation = null;
@@ -94,13 +122,17 @@ opratorButtons.forEach((button) => { // 各演算子ボタンに対して処理�
         }
         //すでに演算子押してあるかチェック
         if(firstNumber !== null && operation !== null) {
-            secondNumber = display.value; //今、画面に表示されている数値を代入
+            secondNumber = display.value.replace(/,/g, ''); //今、画面に表示されている数値を代入
             const result = calculate(firstNumber, secondNumber, operation);
-            display.value = result;
+            if (typeof result === 'number') {
+                display.value = result.toLocaleString();
+                } else {
+                    display.value = result;
+                }
             firstNumber = result;
             secondNumber = null;
         } else {
-            firstNumber = display.value;
+            firstNumber = display.value.replace(/,/g, ''); ;
         }
 
         operation = op; //ここで演算子更新
